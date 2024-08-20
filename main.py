@@ -8,7 +8,7 @@ from ml.data import apply_label, process_data
 from ml.model import inference, load_model
 
 # DO NOT MODIFY 
-# Adding notes so this is changed. Using this to push
+# Adding notes so this is changed.
 class Data(BaseModel):
     age: int = Field(..., example=37)
     workclass: str = Field(..., example="Private")
