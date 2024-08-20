@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.preprocessing import LabelBinarizer, OneHotEncoder
 
 
+
 def process_data(
     X, categorical_features=[], label=None, training=True, encoder=None, lb=None
 ):
@@ -51,10 +52,16 @@ def process_data(
         y = np.array([])
 
     X_categorical = X[categorical_features].values
-    X_continuous = X.drop(*[categorical_features], axis=1)
+    #X_continuous = X.drop(*[categorical_features], axis=1)
+    X_continuous = X.drop(columns=categorical_features, axis=1)
+
+    ### DataFrame shapes before encoding
+    #print(f"Shape of X_categorical before encoding: {X_categorical.shape}")
+    #print(f"Shape of X_continuous: {X_continuous.shape}")
 
     if training is True:
-        encoder = OneHotEncoder(sparse=False, handle_unknown="ignore")
+        encoder = OneHotEncoder(handle_unknown="ignore")
+        # Removed argument "sparse=False"
         lb = LabelBinarizer()
         X_categorical = encoder.fit_transform(X_categorical)
         y = lb.fit_transform(y.values).ravel()
@@ -65,7 +72,19 @@ def process_data(
         # Catch the case where y is None because we're doing inference.
         except AttributeError:
             pass
+    
+    # Convert the sparse matrix to a dense array
+    X_categorical = X_categorical.toarray()
 
+    ### DataFrame shapes and types after encoding
+    #print(f"Type of X_continuous: {type(X_continuous)}, Shape: {X_continuous.shape}")
+    #print(f"Type of X_categorical: {type(X_categorical)}, Shape: {X_categorical.shape}")
+    
+    # Ensure that X_categorical is still a 2D array
+    if X_categorical.ndim != 2:
+        print("X_categorical is not 2D after encoding!")
+        return
+    
     X = np.concatenate([X_continuous, X_categorical], axis=1)
     return X, y, encoder, lb
 
