@@ -36,4 +36,6 @@ jobs:
         flake8 . --exclude=fastapi --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest test_ml.py
+        pytest test_ml.py::test_process_data_shapes
+        pytest test_ml.py::test_ModelAndEncoder
+        pytest test_ml.py::test_process_data_encoding
